@@ -9,15 +9,25 @@ import { useSliderContext } from '../../context/SliderContext'
 
 export default function SavedScreen() {
     const {activities, setActivities} = useSliderContext()
-    
+
+    const getActivities = async () => {
+        const activities = await AsyncStorage.getItem('activities')
+        const jsonActivities = JSON.parse(activities)
+        setActivities(jsonActivities)
+    }
+
+    useEffect(() => {
+        getActivities()
+    }, [])
 
     const removeActivity = async (key) => {
+        // REMOVE FROM ACTIVITIES AND ASYNC STORAGE
+
         try {
-        const activities = await AsyncStorage.getItem('activities');
-        let activitiesFav = JSON.parse(activities);
+        const existingActivities = await AsyncStorage.getItem('activities');
+        let activitiesFav = JSON.parse(existingActivities);
         const activitiesItems = activitiesFav.filter(function(e){ return e.key !== key });
         setActivities(activitiesItems)
-
         await AsyncStorage.setItem('activities', JSON.stringify(activitiesItems));
 
             console.log('delete')
@@ -27,7 +37,7 @@ export default function SavedScreen() {
 
     
 
-    if (!activities) {
+    if (activities.length === 0) {
         return <Text style={styles.noActivitiesText}>No saved activities</Text>
     }
 

@@ -9,15 +9,33 @@ import { Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
-export default function IdeaScreen({ route }) {
+export default function IdeaScreen() {
     const [liked, setLiked] = useState(false)
     const navigation = useNavigation()
     const {price, participants, selectedCategory, accessibility, setActivities, activities} = useSliderContext()
     const [activity, setActivity] = useState()
 
-    const storeNewActivity = async (activity) => {
+    const getActivity = async () => {
+            try {
+                const response = await fetch(`http://www.boredapi.com/api/activity?${participants && `participants=${participants}`}&${price && `price=${price.toFixed(2)}`}&${accessibility && `accessibility=${accessibility.toFixed(2)}`}&${selectedCategory && `type=${selectedCategory}`}`)
+                // console.log(`http://www.boredapi.com/api/activity?${participants && `participants=${participants}`}&${price && `price=${price.toFixed(2)}`}&${accessibility && `accessibility=${accessibility.toFixed(2)}`}&${selectedCategory && `type=${selectedCategory}`}`)
+                const json = await response.json()
+                setActivity(json)
+            } catch (error) {
+                console.log(error)
+            }
+        }
 
-        let existingActivities = await getExistingActivities()
+    const getActivities = async () => {
+            const activities = await AsyncStorage.getItem('activities')
+            const jsonActivities = JSON.parse(activities)
+            setActivities(jsonActivities)
+        }
+
+
+    const storeNewActivity = async () => {
+
+        let existingActivities = await getExistingActivitiesFromStorage()
         const updatedActivities = [...existingActivities, activity]
         console.log("Updated activities", updatedActivities)
         await AsyncStorage.setItem('activities', JSON.stringify(updatedActivities))
@@ -26,53 +44,49 @@ export default function IdeaScreen({ route }) {
         
     }
 
-    const getExistingActivities = async () => {
+    const checkIfInActivities = () => {
+        for (let i = 0; i < activities.length; i++) {
+            if (activities[i].activity === activity.activity) {
+                return true
+            }
+        }
+        return false
+    }
+
+
+    const getExistingActivitiesFromStorage = async () => {
         let activities = await AsyncStorage.getItem('activities')
         return activities ? JSON.parse(activities) : []
     }
 
-    const checkIfInActivities = () => {
-        console.log(activities, '😵')
-        console.log(activity, '🥳')
-        activities.some(element => {
-        if (element.activity === activity.activity) {
-            console.log('yes')
-            return true;
+    const checkIfInStorage = async () => {
+        const existingActivities = await getExistingActivitiesFromStorage()
+        // console.log(existingActivities)
+        for (let i = 0; i < existingActivities.length; i++) {
+            if (existingActivities[i].activity === activity.activity) {
+                return true
+            }
         }
-        console.log('no')
-        return false;
-});
+        return false
     }
 
     // AsyncStorage.clear()
 
-
     
-
-
-
-    const getActivity = async () => {
-        try {
-            const response = await fetch(`http://www.boredapi.com/api/activity?${participants && `participants=${participants}`}&${price && `price=${price.toFixed(2)}`}&${accessibility && `accessibility=${accessibility.toFixed(2)}`}&${selectedCategory && `type=${selectedCategory}`}`)
-            // console.log(`http://www.boredapi.com/api/activity?${participants && `participants=${participants}`}&${price && `price=${price.toFixed(2)}`}&${accessibility && `accessibility=${accessibility.toFixed(2)}`}&${selectedCategory && `type=${selectedCategory}`}`)
-            const json = await response.json()
-            setActivity(json)
-        } catch (error) {
-            console.log(error)
-        }
-    }
     useEffect(() => {
         getActivity()
+        getActivities()
     }, [])
-    const onLike = (activity) => {
-        if (checkIfInActivities()) {
-            return
-        } else {
-            storeNewActivity(activity)
-            console.log('added')
 
+    const onLike = async () => {
+        if (!await checkIfInStorage()) {
+            storeNewActivity()
+            return
         }
+        console.log('exists')
+        
     }
+
     
     if (!activity) {
         return (
@@ -108,7 +122,7 @@ export default function IdeaScreen({ route }) {
                     >More info</Text>
                 )}
         {activity.activity && (
-            <Pressable onPress={() => onLike(activity)}>
+            <Pressable onPress={() => onLike()}>
                 <AntDesign name={checkIfInActivities() ? "heart" : 'hearto'} size={36} color={checkIfInActivities() ? '#ff0050' : 'black'} />
             </Pressable>
 
