@@ -43,7 +43,8 @@ export default function SavedScreen() {
 
   return (
     <View style={styles.container}>
-        <SwipeListView 
+        <SwipeListView
+        showsVerticalScrollIndicator={false}
         data={activities}
         renderItem={({item}, rowMap) => (
             <IdeaComponent activity={item.activity} accessibility={item.accessibility}

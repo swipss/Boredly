@@ -1,10 +1,9 @@
-import { View, Text, StyleSheet, ScrollView, Pressable, Image, ActivityIndicator } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, Pressable, Image, ActivityIndicator, LayoutAnimation } from 'react-native'
 import React, {useState, useEffect} from 'react'
 import CategoryItem from '../../components/CategoryItem'
 import SliderComponent from '../../components/SliderComponent'
 import { useSliderContext } from '../../context/SliderContext'
 import { useNavigation } from '@react-navigation/native'
-import DropDownPicker from 'react-native-dropdown-picker'
 import { Entypo } from '@expo/vector-icons';
 
 const categories = ['education', 'recreational', 'social', 'diy', 'charity', 'cooking',
@@ -12,6 +11,15 @@ const categories = ['education', 'recreational', 'social', 'diy', 'charity', 'co
 
 
 export default function HomeScreen() {
+
+    const [isOpen, setIsOpen] = useState(false);
+
+    const toggleOpen = () => {
+        setIsOpen(value => !value);
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+    }
+
+    
     const navigation = useNavigation()
     const {participants,
     setParticipants,
@@ -48,38 +56,38 @@ export default function HomeScreen() {
         </Pressable>
         <View style={styles.filterContainer}>
             <Text style={styles.text}>Filter activity</Text>
-            <Pressable onPress={() => setOpen(!open)}>
-                <Entypo name={open ? 'chevron-up' : "chevron-down"} size={24} color="black" />
+            <Pressable onPress={toggleOpen} activeOpacity={0.6}>
+                <Entypo name={isOpen ? 'chevron-up' : "chevron-down"} size={24} color="black" />
             </Pressable>
         </View>
-        {open && (
-           <>
-           <View style={styles.categoryContainer}>
-                <Text style={styles.title}>Category</Text>
-                <Pressable style={styles.reset} onPress={onReset}>
-                    <Text style={styles.resetText}>Reset</Text>
-                </Pressable>
-           </View>
-        <ScrollView
-        key={(item, index) => index.toString()}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        >
-            {categories.map(category => <View key={Math.random()}>
-                <CategoryItem categoryText={category} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/> 
-            </View>)}
-        </ScrollView>
-        <View style={{borderWidth: 0.5, borderColor: '#e9e9e9', marginVertical: 20}}/>
+        <View style={[styles.list, !isOpen ? styles.hidden : undefined]}>
 
+            <View style={styles.categoryContainer}>
+                    <Text style={styles.title}>Category</Text>
+                    <Pressable style={styles.reset} onPress={onReset}>
+                        <Text style={styles.resetText}>Reset</Text>
+                    </Pressable>
+            </View>
+            <ScrollView
+            key={(item, index) => index.toString()}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            >
+                {categories.map(category => <View key={Math.random()}>
+                    <CategoryItem categoryText={category} selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory}/> 
+                </View>)}
+            </ScrollView>
+            <View style={{borderWidth: 0.5, borderColor: '#e9e9e9', marginVertical: 20}}/>
+
+            
+            <SliderComponent name="Participants" maximumValue={10} step={1} value={participants} setValue={setParticipants}/>
+            <SliderComponent name="Price" maximumValue={1} step={0.05} value={price?.toFixed(2)} setValue={setPrice}/>
+            <SliderComponent name="Accessibility" maximumValue={1} step={0.02} value={accessibility?.toFixed(2)} setValue={setAccessibility}/>
+            
+        </View>
         
-        <SliderComponent name="Participants" maximumValue={10} step={1} value={participants} setValue={setParticipants}/>
-        <SliderComponent name="Price" maximumValue={1} step={0.05} value={price?.toFixed(2)} setValue={setPrice}/>
-        <SliderComponent name="Accessibility" maximumValue={1} step={0.02} value={accessibility?.toFixed(2)} setValue={setAccessibility}/>
-        </>
-       )}
+       
 
-        {/* TODO: generate random idea without any parameters */}
-        {/* TODO: save/bookmark ideas */}
     </View>
   )
 }
@@ -135,14 +143,24 @@ const styles = StyleSheet.create({
         marginBottom: 20
     },
     reset: {
-        paddingHorizontal: 12,
-        paddingVertical: 8,
+        width: 75,
+        height: 30,
+        justifyContent: 'center',
+        // paddingHorizontal: 12,
+        // paddingVertical: 8,
         borderRadius: 10,
         backgroundColor: 'lightgrey',
 
     },
     resetText: {
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        textAlign: 'center'
+    },
+    hidden: {
+        height: 0,
+    },
+    list: {
+        overflow: 'hidden'
     },
 
 })
