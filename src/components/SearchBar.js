@@ -39,6 +39,7 @@ export default function SearchBar() {
         value={text}
         onChangeText={(text) => searchActivities(text)}
         placeholder={'Search activities'}
+        style={{width: '100%'}}
         />
     </View>
   )

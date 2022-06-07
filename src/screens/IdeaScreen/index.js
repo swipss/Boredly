@@ -10,9 +10,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 export default function IdeaScreen() {
-    const [liked, setLiked] = useState(false)
     const navigation = useNavigation()
-    const {price, participants, selectedCategory, accessibility, setActivities, activities} = useSliderContext()
+    const {price, participants, selectedCategory, accessibility, setActivities, activities, setFilteredActivities} = useSliderContext()
     const [activity, setActivity] = useState()
 
     const getActivity = async () => {
@@ -41,6 +40,7 @@ export default function IdeaScreen() {
         await AsyncStorage.setItem('activities', JSON.stringify(updatedActivities))
         console.log("Stored")
         setActivities(updatedActivities)
+        setFilteredActivities(updatedActivities)
         
     }
 
@@ -111,7 +111,7 @@ export default function IdeaScreen() {
         {activity.activity ? (
             <>
                 <Text style={styles.title}>{activity.activity}</Text>
-                <Text style={styles.info}>{activity.type} &#8226; {activity.participants} participants &#8226; ${activity.price} &#8226; {activity.accessibility < 0.5 ? 'accessible' : 'not accesible'}</Text>
+                <Text style={styles.info}>{activity.type} &#8226; {activity.participants} participants &#8226; ${activity.price} &#8226; {activity.accessibility < 0.5 ? 'accessible' : 'possibly unaccessible'}</Text>
 
             </>
 

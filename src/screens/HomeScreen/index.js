@@ -45,7 +45,7 @@ export default function HomeScreen() {
     }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {flex: isOpen && 1}]}>
         <Text style={styles.headerTitle}>Click to generate a random activity</Text>
         <Pressable style={styles.button} onPress={onPress}>
             <Image
@@ -96,7 +96,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+
         paddingHorizontal: 20,
         marginTop: 60,
     },
@@ -159,9 +159,11 @@ const styles = StyleSheet.create({
     },
     hidden: {
         height: 0,
+
     },
     list: {
         overflow: 'hidden',
+
     },
 
 })

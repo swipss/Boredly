@@ -6,6 +6,7 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 import { FontAwesome } from '@expo/vector-icons';
 import { useSliderContext } from '../../context/SliderContext'
 import SearchBar from '../../components/SearchBar'
+import { Entypo } from '@expo/vector-icons';
 
 
 export default function SavedScreen() {
@@ -30,6 +31,7 @@ export default function SavedScreen() {
         let activitiesFav = JSON.parse(existingActivities);
         const activitiesItems = activitiesFav.filter(function(e){ return e.key !== key });
         setActivities(activitiesItems)
+        setFilteredActivities(activitiesItems)
         await AsyncStorage.setItem('activities', JSON.stringify(activitiesItems));
 
             console.log('delete')
@@ -45,7 +47,6 @@ export default function SavedScreen() {
 
   return (
     <View style={styles.container}>
-        <SearchBar />
         <SwipeListView
         showsVerticalScrollIndicator={false}
         data={filteredActivities}
@@ -58,12 +59,16 @@ export default function SavedScreen() {
             )}
             renderHiddenItem={ ({item}, rowMap) => (
                 <View style={styles.rowBack}>
-                    <Pressable onPress={() => removeActivity(item.key)}>
-                        <FontAwesome name="trash-o" size={24} color="white" style={{paddingRight: 10}} />
+                    <Pressable onPress={() => removeActivity(item.key)} style={styles.delete}>
+                        <FontAwesome name="trash-o" size={24} color="white"/>
+                    </Pressable>
+                    <Pressable onPress={() => console.log('complete')} style={styles.complete}>
+                        <Entypo name="check" size={24} color="white" />
                     </Pressable>
                 </View>
             )}
-            rightOpenValue={-75}
+            ListHeaderComponent={<SearchBar />}
+            rightOpenValue={-180}
             disableRightSwipe
         />
     </View>
@@ -81,11 +86,26 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'flex-end',
         alignItems: 'center',
-        padding: 20,
         borderRadius: 20,
         marginBottom: 20,
-        flex: 1
+        flex: 1,
     },
+    complete: {
+        backgroundColor: '#24d600',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 35,
+        borderTopEndRadius: 20,
+        borderBottomEndRadius: 20
+    },
+    delete: {
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingHorizontal: 40
+    },
+    
     noActivitiesText: {
         textAlign: 'center',
         marginTop: 20,
