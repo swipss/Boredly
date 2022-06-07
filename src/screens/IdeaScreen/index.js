@@ -45,12 +45,15 @@ export default function IdeaScreen() {
     }
 
     const checkIfInActivities = () => {
-        for (let i = 0; i < activities.length; i++) {
-            if (activities[i].activity === activity.activity) {
-                return true
+        if (activities) {
+            for (let i = 0; i < activities.length; i++) {
+                if (activities[i].activity === activity.activity) {
+                    return true
+                }
             }
+            return false
+
         }
-        return false
     }
 
 
@@ -127,11 +130,11 @@ export default function IdeaScreen() {
             </Pressable>
 
         )}
-        <LinearGradient  style={styles.button} start={{x: 0, y: 0}} end={{x: 2, y: 0}} colors={['#F39C12', '#FEE9A0']}>
-            <Pressable onPress={() => getActivity()}>
-                <Text style={{fontWeight: 'bold', fontSize: 16, color: 'white'}}>Generate new idea</Text>
-            </Pressable>
-        </LinearGradient>
+        <Pressable onPress={() => getActivity()}>
+            <LinearGradient  style={styles.button} start={{x: 0, y: 0}} end={{x: 2, y: 0}} colors={['#F39C12', '#FEE9A0']}>
+                    <Text style={{fontWeight: 'bold', fontSize: 16, color: 'white'}}>Generate new idea</Text>
+            </LinearGradient>
+        </Pressable>
     </View>
   )
 }

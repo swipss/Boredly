@@ -5,15 +5,17 @@ import IdeaComponent from '../../components/IdeaComponent'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { FontAwesome } from '@expo/vector-icons';
 import { useSliderContext } from '../../context/SliderContext'
+import SearchBar from '../../components/SearchBar'
 
 
 export default function SavedScreen() {
-    const {activities, setActivities} = useSliderContext()
+    const {activities, setActivities, setFilteredActivities, filteredActivities} = useSliderContext()
 
     const getActivities = async () => {
         const activities = await AsyncStorage.getItem('activities')
         const jsonActivities = JSON.parse(activities)
         setActivities(jsonActivities)
+        setFilteredActivities(jsonActivities)
     }
 
     useEffect(() => {
@@ -36,16 +38,17 @@ export default function SavedScreen() {
         }}
 
     
-
-    if (activities.length === 0) {
+        // console.log('activities', activities)
+    if (activities?.length === 0 || !activities) {
         return <Text style={styles.noActivitiesText}>No saved activities</Text>
     }
 
   return (
     <View style={styles.container}>
+        <SearchBar />
         <SwipeListView
         showsVerticalScrollIndicator={false}
-        data={activities}
+        data={filteredActivities}
         renderItem={({item}, rowMap) => (
             <IdeaComponent activity={item.activity} accessibility={item.accessibility}
                 link={item.link}

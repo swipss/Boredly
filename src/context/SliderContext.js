@@ -9,9 +9,11 @@ const SliderContextProvider = ({children}) => {
     const [price, setPrice] = useState()
     const [accessibility, setAccessibility] = useState()
     const [activities, setActivities] = useState([])
+    const [filteredActivities, setFilteredActivities] = useState([])
+
 
     return (
-        <SliderContext.Provider value={{participants, setParticipants, price, setPrice, accessibility, setAccessibility, selectedCategory, setSelectedCategory, activities, setActivities}}>
+        <SliderContext.Provider value={{participants, setParticipants, price, setPrice, accessibility, setAccessibility, selectedCategory, setSelectedCategory, activities, setActivities, filteredActivities, setFilteredActivities}}>
             {children}
         </SliderContext.Provider>
     )

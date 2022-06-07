@@ -60,7 +60,9 @@ export default function HomeScreen() {
                 <Entypo name={isOpen ? 'chevron-up' : "chevron-down"} size={24} color="black" />
             </Pressable>
         </View>
-        <View style={[styles.list, !isOpen ? styles.hidden : undefined]}>
+        <ScrollView style={[styles.list, !isOpen ? styles.hidden : undefined]}
+        showsVerticalScrollIndicator={false}
+        >
 
             <View style={styles.categoryContainer}>
                     <Text style={styles.title}>Category</Text>
@@ -84,7 +86,7 @@ export default function HomeScreen() {
             <SliderComponent name="Price" maximumValue={1} step={0.05} value={price?.toFixed(2)} setValue={setPrice}/>
             <SliderComponent name="Accessibility" maximumValue={1} step={0.02} value={accessibility?.toFixed(2)} setValue={setAccessibility}/>
             
-        </View>
+        </ScrollView>
         
        
 
@@ -94,6 +96,7 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         paddingHorizontal: 20,
         marginTop: 60,
     },
@@ -146,8 +149,6 @@ const styles = StyleSheet.create({
         width: 75,
         height: 30,
         justifyContent: 'center',
-        // paddingHorizontal: 12,
-        // paddingVertical: 8,
         borderRadius: 10,
         backgroundColor: 'lightgrey',
 
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
         height: 0,
     },
     list: {
-        overflow: 'hidden'
+        overflow: 'hidden',
     },
 
 })
