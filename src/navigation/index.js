@@ -56,7 +56,7 @@ const TopTab = createMaterialTopTabNavigator()
 
 const TopTabs = () => {
     return (
-        <TopTab.Navigator screenOptions={{tabBarIndicatorStyle: {backgroundColor: '#F39C12'}}}>
+        <TopTab.Navigator screenOptions={{tabBarIndicatorStyle: {backgroundColor: '#F39C12'}, swipeEnabled: false}}>
             <TopTab.Screen name="Saved" component={SavedScreen}
             />
             <TopTab.Screen name="Completed" component={CompletedScreen}/>

@@ -10,10 +10,24 @@ const SliderContextProvider = ({children}) => {
     const [accessibility, setAccessibility] = useState()
     const [activities, setActivities] = useState([])
     const [filteredActivities, setFilteredActivities] = useState([])
+    const [completedActivities, setCompletedActivities] = useState([])
 
 
     return (
-        <SliderContext.Provider value={{participants, setParticipants, price, setPrice, accessibility, setAccessibility, selectedCategory, setSelectedCategory, activities, setActivities, filteredActivities, setFilteredActivities}}>
+        <SliderContext.Provider value={{participants, 
+        setParticipants, 
+        price, 
+        setPrice, 
+        accessibility, 
+        setAccessibility, 
+        selectedCategory, 
+        setSelectedCategory, 
+        activities, 
+        setActivities, 
+        filteredActivities, 
+        setFilteredActivities,
+        completedActivities, 
+        setCompletedActivities}}>
             {children}
         </SliderContext.Provider>
     )

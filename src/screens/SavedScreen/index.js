@@ -10,12 +10,15 @@ import { Entypo } from '@expo/vector-icons';
 
 
 export default function SavedScreen() {
-    const {activities, setActivities, setFilteredActivities, filteredActivities} = useSliderContext()
+    const {activities, setActivities, setFilteredActivities, filteredActivities, completedActivities, setCompletedActivities} = useSliderContext()
 
     const getActivities = async () => {
         const activities = await AsyncStorage.getItem('activities')
+        const completedActivities = await AsyncStorage.getItem('completed')
         const jsonActivities = JSON.parse(activities)
+        const jsonCompletedActivities = JSON.parse(completedActivities)
         setActivities(jsonActivities)
+        setCompletedActivities(jsonCompletedActivities)
         setFilteredActivities(jsonActivities)
     }
 
@@ -23,24 +26,63 @@ export default function SavedScreen() {
         getActivities()
     }, [])
 
+
     const removeActivity = async (key) => {
         // REMOVE FROM ACTIVITIES AND ASYNC STORAGE
-
         try {
-        const existingActivities = await AsyncStorage.getItem('activities');
-        let activitiesFav = JSON.parse(existingActivities);
-        const activitiesItems = activitiesFav.filter(function(e){ return e.key !== key });
-        setActivities(activitiesItems)
-        setFilteredActivities(activitiesItems)
-        await AsyncStorage.setItem('activities', JSON.stringify(activitiesItems));
+            const existingActivities = await AsyncStorage.getItem('activities');
+            let activitiesFav = JSON.parse(existingActivities);
+            const activitiesItems = activitiesFav.filter(function(e){ return e.key !== key });
+            setActivities(activitiesItems)
+            setFilteredActivities(activitiesItems)
+            await AsyncStorage.setItem('activities', JSON.stringify(activitiesItems));
 
             console.log('delete')
         } catch(error) {
         console.log('error: ', error);
         }}
-
     
-        // console.log('activities', activities)
+    const completeActivity = async (activity) => {
+        // If activity does not exist in completed activities:
+        if (!await checkActivityInCompletedActivities(activity)) {
+            storeCompletedActivity(activity)
+            return
+        }
+        console.log('exists')
+        // store completed activity into async storage
+        // store completed activity into array
+
+        // else dont do anything
+    }
+
+    const checkActivityInCompletedActivities = async (activity) => {
+        const existingActivities = await getExistinCompletedActivitiesFromStorage()
+        for (let i = 0; i < existingActivities.length; i++) {
+            if (existingActivities[i].activity === activity.activity) {
+                return true
+            }
+        }
+        return false
+    }
+
+    const getExistinCompletedActivitiesFromStorage = async () => {
+        let completedActivities = await AsyncStorage.getItem('completed')
+        return completedActivities ? JSON.parse(completedActivities) : []
+    }
+
+    const storeCompletedActivity = async (activity) => {
+        try {
+            let existingCompletedActivities = await getExistinCompletedActivitiesFromStorage()
+            const updatedCompletedActivities = [...existingCompletedActivities, activity]
+            console.log("completed activities", updatedCompletedActivities)
+            await AsyncStorage.setItem('completed', JSON.stringify(updatedCompletedActivities))
+            setCompletedActivities(updatedCompletedActivities)
+            console.log("Stored")
+        } catch (error) {
+            
+        }
+    }
+    
     if (activities?.length === 0 || !activities) {
         return <Text style={styles.noActivitiesText}>No saved activities</Text>
     }
@@ -62,7 +104,7 @@ export default function SavedScreen() {
                     <Pressable onPress={() => removeActivity(item.key)} style={styles.delete}>
                         <FontAwesome name="trash-o" size={24} color="white"/>
                     </Pressable>
-                    <Pressable onPress={() => console.log('complete')} style={styles.complete}>
+                    <Pressable onPress={() => completeActivity(item)} style={styles.complete}>
                         <Entypo name="check" size={24} color="white" />
                     </Pressable>
                 </View>
