@@ -46,13 +46,13 @@ export default function SavedScreen() {
         // If activity does not exist in completed activities:
         if (!await checkActivityInCompletedActivities(activity)) {
             storeCompletedActivity(activity)
+            const completedActivities = filteredActivities.filter(act => act != activity)
+            await AsyncStorage.setItem('activities', JSON.stringify(completedActivities))
+            setFilteredActivities(completedActivities)
             return
         }
         console.log('exists')
-        // store completed activity into async storage
-        // store completed activity into array
-
-        // else dont do anything
+       
     }
 
     const checkActivityInCompletedActivities = async (activity) => {
@@ -97,7 +97,8 @@ export default function SavedScreen() {
                 link={item.link}
                 participants={item.participants}
                 price={item.price}
-                type={item.type}/>
+                type={item.type}
+                isEditing={true}/>
             )}
             renderHiddenItem={ ({item}, rowMap) => (
                 <View style={styles.rowBack}>

@@ -3,9 +3,9 @@ import React from 'react'
 import { Feather } from '@expo/vector-icons';
 
 
-export default function IdeaComponent({accessibility, activity, link, participants, price, type}) {
+export default function IdeaComponent({accessibility, activity, link, participants, price, type, isEditing}) {
   return (
-      <View style={styles.activityContainer}>
+      <View style={[styles.activityContainer, {backgroundColor: isEditing ? 'white' : '#ddd'}]}>
           <View style={styles.textContainer}>
                 <Text style={styles.activityText}>{activity}</Text>
                 <Text style={styles.categoryText}>{type} &#8226; {participants} participants &#8226; ${price} &#8226; {accessibility < 0.5 ? 'accessible' : 'possibly unaccessible'}</Text>
@@ -17,7 +17,10 @@ export default function IdeaComponent({accessibility, activity, link, participan
                 )}
                 
           </View>
-          <Feather name="menu" size={24} color="#888" />
+          {isEditing && (
+              <Feather name="menu" size={24} color="#888" />
+
+          )}
       </View>
   )
 }
@@ -30,7 +33,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         padding: 20,
         borderRadius: 20,
-        marginBottom: 20
+        marginBottom: 20,
     },
     textContainer: {
         width: '90%'
